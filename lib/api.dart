@@ -4,14 +4,13 @@ import 'models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-const String baseUrl = 'https://divyeshdeficit.pythonanywhere.com/'; // Change this to your actual URL
+const String baseUrl = 'https://divyeshdeficit.pythonanywhere.com';
 
 Future<List<Food>> fetchFoods() async {
   final response = await http.get(
     Uri.parse('$baseUrl/foods/'),
     headers: {
       'Content-Type': 'application/json',
-      // Include token if needed
     },
   );
 
@@ -58,7 +57,7 @@ Future<String> obtainAuthToken(String username, String password) async {
 
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
-    return data['token']; // Assuming the response contains a 'token' field
+    return data['token'];
   } else {
     // Handle errors, throw exception, or return an empty string if no token obtained
     throw Exception('Failed to obtain token');
@@ -102,7 +101,6 @@ Future<UserFood?> createUserFood(int foodId, double amount) async {
   );
 
   if (response.statusCode == 200 || response.statusCode == 201) {
-    // Assuming your API returns the created user food object
     return UserFood.fromJson(json.decode(response.body));
   } else {
     // Handle errors or return null to indicate failure
@@ -159,4 +157,101 @@ Future<int> fetchCaloriesForToday() async {
     throw Exception('Failed to load today\'s calorie count');
   }
 
+}
+
+
+// Exercise APIs
+Future<List<Exercise>> fetchExercises() async {
+  final response = await http.get(
+    Uri.parse('$baseUrl/exercises/'),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    List<dynamic> exercisesJson = json.decode(response.body);
+    return exercisesJson.map((json) => Exercise.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load exercises');
+  }
+}
+
+Future<List<UserExercise>> fetchUserExercises() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('auth_token');
+
+  final response = await http.get(
+    Uri.parse('$baseUrl/userexercises/'),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    List<dynamic> userExercisesJson = json.decode(response.body);
+    return userExercisesJson.map((json) => UserExercise.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load user exercises');
+  }
+}
+
+Future<bool> updateUserExerciseDuration(int exerciseId, int userExerciseId, double newDuration) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('auth_token');
+
+  final response = await http.put(
+    Uri.parse('$baseUrl/userexercises/$userExerciseId/'),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token $token',
+    },
+    body: jsonEncode({
+      'exercise': exerciseId,
+      'duration': newDuration,
+    }),
+  );
+  // print('Edit Exercise, ID=$exerciseId, Response=${response.body}, ${response.statusCode}');
+  return response.statusCode == 200 || response.statusCode == 204;
+}
+
+Future<UserExercise?> createUserExercise(int exerciseId, double duration) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('auth_token');
+
+  final response = await http.post(
+    Uri.parse('$baseUrl/userexercises/'),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token $token',
+    },
+    body: jsonEncode({
+      'exercise': exerciseId,
+      'duration': duration,
+    }),
+  );
+  // print('Create New Exercise, ID=$exerciseId, Response=${response.body}, ${response.statusCode}');
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    return UserExercise.fromJson(json.decode(response.body));
+  } else {
+    return null;
+  }
+}
+
+Future<List<Exercise>> fetchAllExercises() async {
+  final response = await http.get(
+    Uri.parse('$baseUrl/exercises/'),
+    headers: {
+      'Content-Type': 'application/json',
+      // If authorization is required for this endpoint, include the token
+    },
+  );
+
+  if (response.statusCode == 200) {
+    List<dynamic> exercisesJson = json.decode(response.body);
+    return exercisesJson.map((json) => Exercise.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load exercises');
+  }
 }

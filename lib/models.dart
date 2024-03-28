@@ -47,4 +47,55 @@ class UserFood {
   }
 }
 
+// Exercise Models
+class Exercise {
+  final int id;
+  final String name;
+  final String unit; // Keep units as a string if they are not used for calculations
+  final double caloriesBurntPerUnit;
 
+  Exercise({
+    required this.id,
+    required this.name,
+    required this.unit,
+    required this.caloriesBurntPerUnit
+  });
+
+  factory Exercise.fromJson(Map<String, dynamic> json) {
+    return Exercise(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      unit: json['unit'] as String,
+      caloriesBurntPerUnit: double.parse(json['calories_burnt_per_unit']),
+    );
+  }
+}
+
+
+class UserExercise {
+  final int id;
+  final int userId;
+  final int exerciseId;
+  double duration; // Use a double since the API gives a string that represents a decimal
+  final DateTime performedDateTime;
+  String? exerciseName;
+
+  UserExercise({
+    required this.id,
+    required this.userId,
+    required this.exerciseId,
+    required this.duration,
+    required this.performedDateTime,
+    this.exerciseName
+  });
+
+  factory UserExercise.fromJson(Map<String, dynamic> json) {
+    return UserExercise(
+      id: json['id'] as int,
+      userId: json['user'] as int,
+      exerciseId: json['exercise'] as int,
+      duration: double.parse(json['duration']),
+      performedDateTime: DateTime.parse(json['performed_datetime']),
+    );
+  }
+}
