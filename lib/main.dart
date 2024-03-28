@@ -212,6 +212,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                   if (duration != null) {
                     UserExercise? newUserExercise = await createUserExercise(selectedExercise!.id, duration);
                     if (newUserExercise != null) {
+                      newUserExercise.exerciseName = selectedExercise!.name; // Set the exercise name here
                       Navigator.of(context).pop(); // Close the dialog
                       setState(() {
                         _userExercises.add(newUserExercise); // Add the new user exercise to the list
@@ -561,5 +562,4 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
       ],
     );
   }
-
 }
