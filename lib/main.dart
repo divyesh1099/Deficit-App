@@ -4,10 +4,12 @@ import 'models.dart';  // Ensure this points to your models file
 import 'login.dart';
 
 void main() {
-  runApp(CalorieTrackerApp());
+  runApp(const CalorieTrackerApp());
 }
 
 class CalorieTrackerApp extends StatelessWidget {
+  const CalorieTrackerApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,12 +17,14 @@ class CalorieTrackerApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      home: const LoginScreen(),
     );
   }
 }
 
 class UserFoodListScreen extends StatefulWidget {
+  const UserFoodListScreen({super.key});
+
   @override
   _UserFoodListScreenState createState() => _UserFoodListScreenState();
 }
@@ -44,17 +48,17 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
 
     // Now match food names to user food records based on IDs
     setState(() {
-      _userFoods.forEach((userFood) {
+      for (var userFood in _userFoods) {
         // Find the matching food based on foodId
         final matchingFood = _allFoods.firstWhere(
               (food) => food.id == userFood.foodId,
           orElse: () => Food(id: 0, name: 'Unknown', caloriesPerUnit: 0),  // Handle 'unknown' case
         );
         userFood.foodName = matchingFood.name; // Assign the food name from the matched food
-      });
+      }
 
       // Now match exercise names to user exercise records based on IDs
-      _userExercises.forEach((userExercise) {
+      for (var userExercise in _userExercises) {
         // Find the matching exercise based on exerciseId
         final matchingExercise = _allExercises.firstWhere(
               (exercise) => exercise.id == userExercise.exerciseId,
@@ -66,19 +70,19 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
           ),  // Handle 'unknown' case
         );
         userExercise.exerciseName = matchingExercise.name; // Assign the exercise name from the matched exercise
-      });
+      }
     });
   }
 
   void showAddFoodModal(BuildContext context, List<Food> allFoods) async {
-    final TextEditingController _amountController = TextEditingController();
+    final TextEditingController amountController = TextEditingController();
     Food? selectedFood;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add New User Food'),
+          title: const Text('Add New User Food'),
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
@@ -104,7 +108,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                     return TextField(
                       controller: fieldTextEditingController,
                       focusNode: fieldFocusNode,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Search Foods", // Add your hint text here
                         border: OutlineInputBorder(),
                       ),
@@ -112,19 +116,19 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                   },
                 ),
                 TextField(
-                  controller: _amountController,
-                  decoration: InputDecoration(hintText: "Enter amount"),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  controller: amountController,
+                  decoration: const InputDecoration(hintText: "Enter amount"),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Add'),
+              child: const Text('Add'),
               onPressed: () async {
-                if (selectedFood != null && _amountController.text.isNotEmpty) {
-                  double? amount = double.tryParse(_amountController.text);
+                if (selectedFood != null && amountController.text.isNotEmpty) {
+                  double? amount = double.tryParse(amountController.text);
                   if (amount != null) {
                     UserFood? newUserFood = await createUserFood(selectedFood!.id, amount);
                     if (newUserFood != null) {
@@ -143,7 +147,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
               },
             ),
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -155,14 +159,14 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
   }
 
   void showAddExerciseModal(BuildContext context, List<Exercise> allExercises) async {
-    final TextEditingController _durationController = TextEditingController();
+    final TextEditingController durationController = TextEditingController();
     Exercise? selectedExercise;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Log New Exercise'),
+          title: const Text('Log New Exercise'),
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
@@ -188,7 +192,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                     return TextField(
                       controller: fieldTextEditingController,
                       focusNode: fieldFocusNode,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Search Exercises",
                         border: OutlineInputBorder(),
                       ),
@@ -196,19 +200,19 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                   },
                 ),
                 TextField(
-                  controller: _durationController,
-                  decoration: InputDecoration(hintText: "Enter duration (minutes)"),
-                  keyboardType: TextInputType.numberWithOptions(decimal: false),
+                  controller: durationController,
+                  decoration: const InputDecoration(hintText: "Enter duration (minutes)"),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: false),
                 ),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Log'),
+              child: const Text('Log'),
               onPressed: () async {
-                if (selectedExercise != null && _durationController.text.isNotEmpty) {
-                  double? duration = double.tryParse(_durationController.text);
+                if (selectedExercise != null && durationController.text.isNotEmpty) {
+                  double? duration = double.tryParse(durationController.text);
                   if (duration != null) {
                     UserExercise? newUserExercise = await createUserExercise(selectedExercise!.id, duration);
                     if (newUserExercise != null) {
@@ -226,7 +230,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
               },
             ),
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -354,7 +358,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Daily Tracker'),
+        title: const Text('My Daily Tracker'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -370,10 +374,10 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
 
   Widget _buildTotalCaloriesSection() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.0),
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: Text(
         'Today\'s Calories: $_todaysCalories',
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 20, // Adjust the size as needed
           fontWeight: FontWeight.bold,
           color: Colors.blue, // Choose a color that fits the app theme
@@ -394,10 +398,10 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
             children: [
               Text(
                 'Food Eaten',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 onPressed: () async {
                   List<Food> allFoods = await fetchAllFoods();
                   showAddFoodModal(context, allFoods);
@@ -415,7 +419,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
               }
               return ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: _userFoods.length,
                 itemBuilder: (context, index) {
                   final userFood = _userFoods[index];
@@ -426,7 +430,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.remove),
+                          icon: const Icon(Icons.remove),
                           onPressed: () async {
                             final newAmount = userFood.amount - 1;
                             if (newAmount >= 0) { // Allow setting amount to 0 since the backend handles deletion
@@ -445,7 +449,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.add),
+                          icon: const Icon(Icons.add),
                           onPressed: () async {
                             final newAmount = userFood.amount + 1;
                             final success = await updateUserFoodAmount(userFood.foodId, userFood.id, newAmount);
@@ -465,7 +469,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
               ;
             } else {
               // By default, show a loading spinner.
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),
@@ -484,10 +488,10 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
             children: [
               Text(
                 'Exercises Logged',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 onPressed: () async {
                   List<Exercise> allExercises = await fetchAllExercises();
                   showAddExerciseModal(context, allExercises);
@@ -505,7 +509,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
               }
               return ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: _userExercises.length,
                 itemBuilder: (context, index) {
                   final userExercise = _userExercises[index];
@@ -516,7 +520,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: Icon(Icons.remove),
+                          icon: const Icon(Icons.remove),
                           onPressed: () async {
                             final newDuration = userExercise.duration - 5; // Subtract 5 minutes each time
                             if (newDuration >= 0) {
@@ -535,7 +539,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.add),
+                          icon: const Icon(Icons.add),
                           onPressed: () async {
                             final newDuration = userExercise.duration + 5; // Add 5 minutes each time
                             final success = await updateUserExerciseDuration(userExercise.exerciseId, userExercise.id, newDuration);
@@ -555,7 +559,7 @@ class _UserFoodListScreenState extends State<UserFoodListScreen> {
               ;
             } else {
               // By default, show a loading spinner.
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),
