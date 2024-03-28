@@ -1,4 +1,4 @@
-# Deficit FrontEnd
+# calorie_deficit
 
 App to track user calorie deficit.
 
